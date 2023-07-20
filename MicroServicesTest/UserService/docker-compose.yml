@@ -1,0 +1,29 @@
+version: '3.9'
+
+services:
+  userdb:
+    image: postgres
+    container_name: userdb-container
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: yourpassword
+    volumes:
+      - userdb-data:/var/lib/postgresql/data
+
+  userservice:
+    build:
+      context: ./UserService
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - userdb
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=userdb;Port=5432;Database=TestTask;User Id=postgres;Password=yourpassword;
+      - ASPNETCORE_ENVIRONMENT=Development
+
+volumes:
+  userdb-data:
+
